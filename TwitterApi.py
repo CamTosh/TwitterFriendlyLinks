@@ -9,7 +9,7 @@ class TwitterApi(object):
 
 
 	def check(self):
-		return self.tw.account.verify_credentials()['id']
+		return self.tw.account.verify_credentials()
 
 
 	def setTarget(self, id):
@@ -24,4 +24,7 @@ class TwitterApi(object):
 			return "No target"
 
 	def findFriends(self):
-		return self.tw.friends.ids()['ids']
+		return self.tw.friends.list()['users']
+
+	def findFriendsWithId(self, idUser):
+		return self.tw.friends.list(user_id = idUser)['users']

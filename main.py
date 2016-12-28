@@ -1,6 +1,6 @@
 from Token import Token, LoadToken
 from TwitterApi import TwitterApi
-
+import json
 
 if __name__ == '__main__':
 	l = LoadToken()
@@ -10,6 +10,26 @@ if __name__ == '__main__':
 
 	for i in l.createToken(dico):
 		t = TwitterApi(i)
-		d[t.check()] = str(t.findFriends())
+		dUser = {}
+		friends = []
+		
+		# je parcour les amis
+		for f in t.findFriends():
+			dUser['name'] = f['screen_name']
+			dUser['id'] = f['id']
 
-	print(d)
+			# je parcour les amis des amis
+			try:
+				friendsOfFriends = []
+
+				for fof in t.findFriendsWithId(f['id']):
+					friendsOfFriends.append(fof['screen_name'])
+			
+				dUser['friends'] = friendsOfFriends
+			except Exception as e:
+				print(e)
+
+			friends.append(dUser)
+		d[t.check()['id']] = friends
+
+	print(json.dumps(d))

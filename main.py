@@ -1,6 +1,8 @@
 from Token import Token, LoadToken
 from TwitterApi import TwitterApi
+from Database import DB
 import json
+
 
 if __name__ == '__main__':
 	l = LoadToken()
@@ -12,7 +14,7 @@ if __name__ == '__main__':
 		t = TwitterApi(i)
 		dUser = {}
 		friends = []
-		
+
 		# je parcour les amis
 		for f in t.findFriends():
 			dUser['name'] = f['screen_name']

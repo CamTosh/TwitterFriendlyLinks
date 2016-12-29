@@ -1,38 +1,43 @@
 from Token import Token, LoadToken
 from TwitterApi import TwitterApi
 from Database import DB
+from User import User
 import json
 
 
 if __name__ == '__main__':
 	l = LoadToken()
-	dico = l.load("token.json")
+	lesTokens = l.load("token.json")
 
-	d = {}
+	dicoUsers = {}
+	listeUtilisateurs = []
 
-	for i in l.createToken(dico):
+	for tokens in l.createToken(lesTokens):
 		try:
-			t = TwitterApi(i)
+		
+			t = TwitterApi(tokens)
 
-			friends = []
+			dUser = {}
+			dUser["id"] = t.check()['id']
+			dUser["name"] = t.check()['screen_name']
 
-			for f in t.findFriends():
-				dUser = {}
-				dUser['name'] = f['screen_name']
-				dUser['id'] = f['id']
-				
-				"""
-				friendsOfFriends = []
+			lesAmis = []
 
-				for fof in t.findFriendsWithId(f['id']):
-					friendsOfFriends.append(fof['screen_name'])
-					dUser['friends'] = friendsOfFriends
-				"""
-				
-				friends.append(dUser)
-			d[t.check()['id']] = friends
-			
+			for friends in t.findFriends():
+				dicoLesAmis = {}
+
+				u = User(friends['id'], friends['screen_name'])
+				dicoLesAmis['id'] = u.getId()
+				dicoLesAmis['name'] = u.getName()
+
+				lesAmis.append(dicoLesAmis)
+
+			dUser["friends"] = lesAmis
+
+			listeUtilisateurs.append(dUser)
+			dicoUsers["users"] = listeUtilisateurs
+
 		except Exception as e:
-			print(e)
-
-	print(json.dumps(d))
+			print(e, tokens)
+			
+	print(json.dumps(dicoUsers))
